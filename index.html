@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Beethoven Player</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        
+        button {
+            padding: 20px 40px;
+            font-size: 24px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <button id="playButton">Play</button>
+
+    <script>
+        const synth = new Tone.Synth().toDestination();
+        const playButton = document.getElementById('playButton');
+        
+        // Simplified "Für Elise" melody
+        const melody = [
+            { note: 'E5', duration: '8n' },
+            { note: 'D#5', duration: '8n' },
+            { note: 'E5', duration: '8n' },
+            { note: 'D#5', duration: '8n' },
+            { note: 'E5', duration: '8n' },
+            { note: 'B4', duration: '8n' },
+            { note: 'D5', duration: '8n' },
+            { note: 'C5', duration: '4n' },
+            { note: 'A4', duration: '2n' }
+        ];
+
+        let isPlaying = false;
+
+        playButton.addEventListener('click', async () => {
+            if (!isPlaying) {
+                isPlaying = true;
+                playButton.textContent = 'Playing...';
+                
+                // Start audio context
+                await Tone.start();
+                
+                // Play the melody
+                let time = Tone.now();
+                melody.forEach(({ note, duration }) => {
+                    synth.triggerAttackRelease(note, duration, time);
+                    time += Tone.Time(duration).toSeconds();
+                });
+
+                // Reset button after melody finishes
+                setTimeout(() => {
+                    playButton.textContent = 'Play';
+                    isPlaying = false;
+                }, time * 500);
+            }
+        });
+    </script>
+</body>
+</html>
